@@ -82,5 +82,3 @@ const Handler = async (chatUpdate, sock, logger) => {
 }
 
 export default Handler;
-
-fixed full code
