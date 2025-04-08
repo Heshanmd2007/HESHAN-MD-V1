@@ -9,7 +9,7 @@
     "restart": "pm2 restart HESHAN-MD"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "https://github.com:Slnckyami/BaileysV2",
+    "@whiskeysockets/baileys": "https://github.com/Slnckyami/BaileysV2",
     "api-dylux": "^1.8.5",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@dark-yasiya/yt-dl.js": "1.0.5",
