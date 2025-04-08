@@ -120,7 +120,12 @@ async function connectToWA() {
     }
     
     if (connection === "close") {
-      if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+      // Fixed error handling for lastDisconnect
+      const shouldReconnect = (lastDisconnect?.error) 
+        ? lastDisconnect.error.output?.statusCode !== DisconnectReason.loggedOut
+        : true;
+      
+      if (shouldReconnect) {
         console.log("Connection closed, reconnecting...");
         setTimeout(connectToWA, 5000);
       } else {
