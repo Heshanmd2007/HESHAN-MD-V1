@@ -844,6 +844,7 @@ async function connectToWA() {
 
     // Vcard Functionality
     conn.sendContact = async (jid, kon, quoted = '', opts = {}) => {
+    try {
         let list = [];
         for (let i of kon) {
             list.push({
@@ -851,6 +852,7 @@ async function connectToWA() {
                 vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await conn.getName(i + '@s.whatsapp.net')}\nFN:${global.OwnerName}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${global.email}\nitem2.X-ABLabel:GitHub\nitem3.URL:https://github.com/${global.github}/HESHAN-MD\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${global.location};;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
             });
         }
+
         conn.sendMessage(
             jid,
             {
@@ -862,30 +864,11 @@ async function connectToWA() {
             },
             { quoted }
         );
-    };
+    } catch (error) {
+        console.error('Error in sendContact:', error);
+    }
+};
 
-    // Status aka brio
-    conn.setStatus = status => {
-        conn.query({
-            tag: 'iq',
-            attrs: {
-                to: '@s.whatsapp.net',
-                type: 'set',
-                xmlns: 'status',
-            },
-            content: [
-                {
-                    tag: 'status',
-                    attrs: {},
-                    content: Buffer.from(status, 'utf-8'),
-                },
-            ],
-        });
-        return status;
-    };
-    
-    conn.serializeM = mek => sms(conn, mek, store);
-}
 
 app.get("/", (req, res) => {
     res.send("HESHAN-MD STARTED ✅");
