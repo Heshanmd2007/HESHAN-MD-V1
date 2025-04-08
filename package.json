@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "github:whiskeysockets/Baileys",
+    "@whiskeysockets/baileys": "github:Slnckyami/BaileysV2",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@dark-yasiya/yt-dl.js": "^1.0.5",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
