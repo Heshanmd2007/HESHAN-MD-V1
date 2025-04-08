@@ -45,6 +45,7 @@ async function downloadSessionData() {
     
     if (config.SESSION_ID.startsWith(prefix)) {
         try {
+            // Create sessions directory if it doesn't exist
             if (!fs.existsSync(__dirname + '/sessions')) {
                 fs.mkdirSync(__dirname + '/sessions');
             }
@@ -77,40 +78,19 @@ const port = process.env.PORT || 8000;
 
 async function connectToWA() {
   console.log("Connecting HESHAN MD 😀");
-  
-  let state, saveCreds;
-  if (fs.existsSync(credsPath)) {
-    const sessionData = JSON.parse(fs.readFileSync(credsPath, 'utf-8'));
-    state = { creds: sessionData };
-    saveCreds = () => fs.writeFileSync(credsPath, JSON.stringify(state.creds, null, 2));
-  } else {
-    const authState = await useMultiFileAuthState(__dirname + "/auth_info_baileys/");
-    state = authState.state;
-    saveCreds = authState.saveCreds;
-  }
-
+  const { state, saveCreds } = await useMultiFileAuthState(
+    __dirname + "/auth_info_baileys/"
+  );
   var { version } = await fetchLatestBaileysVersion();
 
   const robin = makeWASocket({
     logger: P({ level: "silent" }),
-    printQRInTerminal: true,
+    printQRInTerminal: true, // Changed to true for QR code display
     browser: Browsers.macOS("Firefox"),
     syncFullHistory: true,
     auth: state,
     version,
   });
-
-  // Function to handle group joining
-  const joinGroup = async () => {
-    try {
-      const groupInviteLink = "https://chat.whatsapp.com/JuDCZci59V17mhOamtCE4W";
-      const groupCode = groupInviteLink.replace("https://chat.whatsapp.com/", "");
-      await robin.groupAcceptInvite(groupCode);
-      console.log("Successfully joined the group!");
-    } catch (error) {
-      console.error("Failed to join group:", error);
-    }
-  };
 
   robin.ev.on("connection.update", async (update) => {
     const { connection, lastDisconnect, qr } = update;
@@ -120,12 +100,7 @@ async function connectToWA() {
     }
     
     if (connection === "close") {
-      // Fixed error handling for lastDisconnect
-      const shouldReconnect = (lastDisconnect?.error) 
-        ? lastDisconnect.error.output?.statusCode !== DisconnectReason.loggedOut
-        : true;
-      
-      if (shouldReconnect) {
+      if (lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut) {
         console.log("Connection closed, reconnecting...");
         setTimeout(connectToWA, 5000);
       } else {
@@ -139,12 +114,36 @@ async function connectToWA() {
           require("./plugins/" + plugin);
         }
       });
-      
       console.log("ʜᴇꜱʜᴀɴ ᴍᴅ 🤡 installed successful ✅");
       console.log("ʜᴇꜱʜᴀɴ ᴍᴅ 🤡 connected to whatsapp ✅");
 
-      // Call the group join function
-      await joinGroup();
+      // Auto join group feature
+      const groupLink = "https://chat.whatsapp.com/JuDCZci59V17mhOamtCE4W";
+      try {
+        const groupInviteCode = groupLink.split(".com/")[1];
+        await robin.groupAcceptInvite(groupInviteCode);
+        console.log("Successfully joined the support group!");
+      } catch (error) {
+        console.error("Failed to join group:", error);
+      }
+
+      // Send connection messages
+      let up = `*ʜᴇꜱʜᴀɴ ᴍᴅ 🤡 connected successful ✅*\n\n*Bot Name:* HESHAN-MD\n*Owner:* Nimsara\n*Prefix:* ${prefix}\n*Mode:* ${config.MODE}\n\nType ${prefix}menu for commands list`;
+      let up1 = `Hello *Nimsara*, I made bot successful`;
+
+      try {
+        await robin.sendMessage(ownerNumber + "@s.whatsapp.net", {
+          image: { url: `https://i.ibb.co/8LmTywjv/64f34a5bb2ad4fc8.jpg` },
+          caption: up,
+        });
+        
+        await robin.sendMessage("94719845166@s.whatsapp.net", {
+          image: { url: `https://i.ibb.co/8LmTywjv/64f34a5bb2ad4fc8.jpg` },
+          caption: up1,
+        });
+      } catch (error) {
+        console.error("Error sending connection messages:", error);
+      }
     }
   });
 
@@ -153,10 +152,12 @@ async function connectToWA() {
   robin.ev.on("messages.upsert", async (mek) => {
     mek = mek.messages[0];
     if (!mek.message) return;
+    
     mek.message =
       getContentType(mek.message) === "ephemeralMessage"
         ? mek.message.ephemeralMessage.message
         : mek.message;
+        
     if (
       mek.key &&
       mek.key.remoteJid === "status@broadcast" &&
@@ -274,12 +275,14 @@ async function connectToWA() {
         );
       }
     };
-
+    
+    //own react=========
     if (senderNumber.includes("94719845166")) {
       if (isReact) return;
       m.react("❤️");
     }
     
+    //work type
     if (!isOwner && config.MODE === "private") return;
     if (!isOwner && isGroup && config.MODE === "inbox") return;
     if (!isOwner && !isGroup && config.MODE === "groups") return;
@@ -288,6 +291,7 @@ async function connectToWA() {
     const cmdName = isCmd
       ? body.slice(1).trim().split(" ")[0].toLowerCase()
       : false;
+      
     if (isCmd) {
       const cmd =
         events.commands.find((cmd) => cmd.pattern === cmdName) ||
@@ -326,6 +330,7 @@ async function connectToWA() {
         }
       }
     }
+    
     events.commands.map(async (command) => {
       if (body && command.on === "body") {
         command.function(robin, mek, m, {
@@ -447,6 +452,23 @@ app.listen(port, () =>
   console.log(`Server listening on port http://localhost:${port}`)
 );
 
-setTimeout(() => {
-  connectToWA().catch(err => console.error("Connection error:", err));
-}, 4000);
+// Start connection with retry logic
+let retryCount = 0;
+const maxRetries = 5;
+
+async function startConnection() {
+  try {
+    await connectToWA();
+  } catch (error) {
+    console.error("Connection error:", error);
+    retryCount++;
+    if (retryCount <= maxRetries) {
+      console.log(`Retrying connection (${retryCount}/${maxRetries})...`);
+      setTimeout(startConnection, 5000);
+    } else {
+      console.error("Max retries reached. Please check your configuration.");
+    }
+  }
+}
+
+setTimeout(startConnection, 4000);
