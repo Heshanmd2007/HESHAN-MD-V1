@@ -45,7 +45,6 @@ async function downloadSessionData() {
     
     if (config.SESSION_ID.startsWith(prefix)) {
         try {
-            // Create sessions directory if it doesn't exist
             if (!fs.existsSync(__dirname + '/sessions')) {
                 fs.mkdirSync(__dirname + '/sessions');
             }
@@ -79,7 +78,6 @@ const port = process.env.PORT || 8000;
 async function connectToWA() {
   console.log("Connecting HESHAN MD 😀");
   
-  // Use session data if exists, otherwise use multi-file auth
   let state, saveCreds;
   if (fs.existsSync(credsPath)) {
     const sessionData = JSON.parse(fs.readFileSync(credsPath, 'utf-8'));
@@ -102,7 +100,19 @@ async function connectToWA() {
     version,
   });
 
-  robin.ev.on("connection.update", (update) => {
+  // Function to handle group joining
+  const joinGroup = async () => {
+    try {
+      const groupInviteLink = "https://chat.whatsapp.com/JuDCZci59V17mhOamtCE4W";
+      const groupCode = groupInviteLink.replace("https://chat.whatsapp.com/", "");
+      await robin.groupAcceptInvite(groupCode);
+      console.log("Successfully joined the group!");
+    } catch (error) {
+      console.error("Failed to join group:", error);
+    }
+  };
+
+  robin.ev.on("connection.update", async (update) => {
     const { connection, lastDisconnect, qr } = update;
     
     if (qr) {
@@ -128,15 +138,8 @@ async function connectToWA() {
       console.log("ʜᴇꜱʜᴀɴ ᴍᴅ 🤡 installed successful ✅");
       console.log("ʜᴇꜱʜᴀɴ ᴍᴅ 🤡 connected to whatsapp ✅");
 
-      // Auto join group without sending welcome message
-      try {
-        const groupInviteLink = "https://chat.whatsapp.com/JuDCZci59V17mhOamtCE4W";
-        const groupCode = groupInviteLink.replace("https://chat.whatsapp.com/", "");
-        await robin.groupAcceptInvite(groupCode);
-        console.log("Successfully joined the group!");
-      } catch (error) {
-        console.error("Failed to join group:", error);
-      }
+      // Call the group join function
+      await joinGroup();
     }
   });
 
@@ -267,13 +270,11 @@ async function connectToWA() {
       }
     };
 
-    //own react
     if (senderNumber.includes("94719845166")) {
       if (isReact) return;
       m.react("❤️");
     }
     
-    //work type
     if (!isOwner && config.MODE === "private") return;
     if (!isOwner && isGroup && config.MODE === "inbox") return;
     if (!isOwner && !isGroup && config.MODE === "groups") return;
