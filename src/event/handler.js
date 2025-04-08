@@ -1,8 +1,8 @@
-import { serialize } from '../../lib/Serializer.js';
+import { serialize, decodeJid } from '../../lib/Serializer.js';
 import path from 'path';
 import fs from 'fs/promises';
-import config from '../../config.cjs';  // Changed from .cjs to .js
-import { smsg } from '../../lib/myfunc.cjs';  // Changed from .cjs to .js
+import config from '../../config.cjs';
+import { smsg } from '../../lib/myfunc.cjs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -40,35 +40,47 @@ const Handler = async (chatUpdate, sock, logger) => {
         const text = m.body.slice(prefix.length + cmd.length).trim();
         const botNumber = await sock.decodeJid(sock.user.id);
         const ownerNumber = config.OWNER_NUMBER + '@s.whatsapp.net';
-        let isCreator = [ownerNumber, botNumber].includes(m.sender);
+        let isCreator = false;
 
-        if (!sock.public && !isCreator) {
-            return;
+        if (m.isGroup) {
+            isCreator = m.sender === ownerNumber || m.sender === botNumber;
+        } else {
+            isCreator = m.sender === ownerNumber || m.sender === botNumber;
+        }
+
+        if (!sock.public) {
+            if (!isCreator) {
+                return;
+            }
         }
 
         await handleAntilink(m, sock, logger, isBotAdmins, isAdmins, isCreator);
+
+        const { isGroup, type, sender, from, body } = m;
+      //  console.log(m);
 
         const pluginDir = path.join(__dirname, '..', 'plugin');
         const pluginFiles = await fs.readdir(pluginDir);
 
         for (const file of pluginFiles) {
-            if (file.endsWith('.js')) {
-                const pluginPath = path.join(pluginDir, file);
-                console.log(`Loading plugin: ${pluginPath} 🚀`);
+        if (file.endsWith('.js')) {
+        const pluginPath = path.join(pluginDir, file);
+        console.log(`Loading plugin: ${pluginPath} 🚀`); //
 
                 try {
                     const pluginModule = await import(`file://${pluginPath}`);
                     const loadPlugins = pluginModule.default;
                     await loadPlugins(m, sock);
                     console.log(`Successfully loaded plugin: ${file} 🔔`);
-                } catch (err) {
-                    console.error(`Failed to load plugin: ${pluginPath}`, err);
-                }
-            }
+        } catch (err) {
+            console.error(`Failed to load plugin: ${pluginPath}`, err);
         }
-    } catch (e) {
-        console.log(e);
     }
-};
+}
+} catch (e) {
+    console.log(e);
+}
 
 export default Handler;
+
+fixed full code
