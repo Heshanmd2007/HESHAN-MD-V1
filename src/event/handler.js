@@ -1,9 +1,8 @@
 import { serialize } from '../../lib/Serializer.js';
 import path from 'path';
 import fs from 'fs/promises';
-import config from '../../config.js';  // Changed from .cjs to .js
-import { smsg } from '../../lib/myfunc.js';  // Changed from .cjs to .js
-import { handleAntilink } from './antilink.js';
+import config from '../../config.cjs';  // Changed from .cjs to .js
+import { smsg } from '../../lib/myfunc.cjs';  // Changed from .cjs to .js
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
