@@ -6,8 +6,8 @@ const config = {
   SESSION_ID: process.env.SESSION_ID || "Your Session Id",
   PREFIX: process.env.PREFIX || '.',
   AUTO_STATUS_SEEN: process.env.AUTO_STATUS_READ !== undefined ? process.env.AUTO_STATUS_SEEN === 'true' : true, 
-  AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY !== undefined ? process.env.AUTO_STATUS_REPLY === 'false' : false,
-  STATUS_READ_MSG: process.env.STATUS_READ_MSG || '',
+  AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY !== undefined ? process.env.AUTO_STATUS_REPLY === 'true' : true,
+  STATUS_READ_MSG: process.env.STATUS_READ_MSG || '*STATUS SEEN BY HESHAN MD 🌟*',
   AUTO_DL: process.env.AUTO_DL !== undefined ? process.env.AUTO_DL === 'true' : false,
   AUTO_READ: process.env.AUTO_READ !== undefined ? process.env.AUTO_READ === 'true' : false,
   AUTO_TYPING: process.env.AUTO_TYPING !== undefined ? process.env.AUTO_TYPING === 'true' : false,
@@ -17,7 +17,7 @@ const config = {
    /*auto block only for 212 */
   AUTO_BLOCK: process.env.AUTO_BLOCK !== undefined ? process.env.AUTO_BLOCK === 'true' : true,
   
-  triggerWords: [
+  triggerWords: q[
     "send", "oni", "one", "dapan", "dpn", "දහන්", "upload",
     "send me", "sent me", "znt", "snt", "ayak", "do", "mee", "autoread"
   ],
@@ -27,7 +27,7 @@ const config = {
   OWNER_NAME: process.env.OWNER_NAME || "HESHAN MD",
   OWNER_NUMBER: process.env.OWNER_NUMBER || "94719845166",
   GEMINI_KEY: process.env.GEMINI_KEY || "AIzaSyCUPaxfIdZawsKZKqCqJcC-GWiQPCXKTDc",
-  WELCOME: process.env.WELCOME !== undefined ? process.env.WELCOME === 'true' : false, 
+  WELCOME: process.env.WELCOME !== undefined ? process.env.WELCOME === 'true' : true, 
 };
 
 
