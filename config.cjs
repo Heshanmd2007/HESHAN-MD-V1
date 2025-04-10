@@ -5,7 +5,8 @@ require("dotenv").config();
 const config = {
   SESSION_ID: process.env.SESSION_ID || "Your Session Id",
   PREFIX: process.env.PREFIX || '.',
-  AUTO_STATUS_SEEN: process.env.AUTO_STATUS_READ !== undefined ? process.env.AUTO_STATUS_SEEN === 'true' : true, 
+  AUTO_STATUS_SEEN: process.env.AUTO_STATUS_SEEN !== undefined ? process.env.AUTO_STATUS_SEEN === 'true' : true,
+  AUTO_STATUS_READ: process.env.AUTO_STATUS_READ !== undefined ? process.env.AUTO_STATUS_READ === 'true' : true, 
   AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY !== undefined ? process.env.AUTO_STATUS_REPLY === 'true' : true,
   STATUS_READ_MSG: process.env.STATUS_READ_MSG || '*STATUS SEEN BY HESHAN MD 🌟*',
   AUTO_DL: process.env.AUTO_DL !== undefined ? process.env.AUTO_DL === 'true' : false,
