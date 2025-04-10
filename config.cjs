@@ -17,7 +17,7 @@ const config = {
    /*auto block only for 212 */
   AUTO_BLOCK: process.env.AUTO_BLOCK !== undefined ? process.env.AUTO_BLOCK === 'true' : true,
   
-  triggerWords: q[
+  triggerWords: [
     "send", "oni", "one", "dapan", "dpn", "දහන්", "upload",
     "send me", "sent me", "znt", "snt", "ayak", "do", "mee", "autoread"
   ],
@@ -29,6 +29,5 @@ const config = {
   GEMINI_KEY: process.env.GEMINI_KEY || "AIzaSyCUPaxfIdZawsKZKqCqJcC-GWiQPCXKTDc",
   WELCOME: process.env.WELCOME !== undefined ? process.env.WELCOME === 'true' : true, 
 };
-
 
 module.exports = config;
