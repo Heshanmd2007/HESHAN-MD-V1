@@ -8,7 +8,7 @@ const config = {
   AUTO_STATUS_SEEN: process.env.AUTO_STATUS_SEEN !== undefined ? process.env.AUTO_STATUS_SEEN === 'true' : true,
   AUTO_STATUS_READ: process.env.AUTO_STATUS_READ !== undefined ? process.env.AUTO_STATUS_READ === 'true' : true, 
   AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY !== undefined ? process.env.AUTO_STATUS_REPLY === 'true' : true,
-  STATUS_READ_MSG: process.env.STATUS_READ_MSG || '*STATUS SEEN BY HESHAN MD 🌟*',
+  STATUS_READ_MSG: process.env.STATUS_READ_MSG || '*Follow කරන්න..🥺💗 = https://whatsapp.com/channel/0029VaeuxGDAu3aYw6VnOX2T*',
   AUTO_DL: process.env.AUTO_DL !== undefined ? process.env.AUTO_DL === 'true' : false,
   AUTO_READ: process.env.AUTO_READ !== undefined ? process.env.AUTO_READ === 'true' : false,
   AUTO_TYPING: process.env.AUTO_TYPING !== undefined ? process.env.AUTO_TYPING === 'true' : false,
