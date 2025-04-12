@@ -8,7 +8,7 @@ const pingCommand = async (m) => {
 
     if (validCommands.includes(cmd)) {
       const randomMs = Math.floor(Math.random() * (500 - 50 + 1)) + 50;  // Random value between 50ms to 500ms
-      const message = `🌟 *Ping Response with HESHAN MD*: \n\n✨ *Your ping is ${randomMs}ms* ✨\n\n💡 *Response time varies with network speed.* 🌐\n\n⏳ *Stay connected for more fast responses!* 🚀`;
+      const message = `🌟 *Ping Response with HESHAN MD⚡*: \n\n✨ *Your ping is ${randomMs}ms* 💥\n\n👨‍💻 *Response time varies with network speed.* 🌐\n\n⏳ *Stay connected for more fast responses!* 🚀`;
 
       m.reply(message);
     }
